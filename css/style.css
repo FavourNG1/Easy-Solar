@@ -1,0 +1,70 @@
+body {
+    background-color: #f0f8ff;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0
+}
+
+h2 {
+    text-align: center
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 200px;
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+h2 {
+    color: #333;
+}
+
+button {
+    padding: 10px;
+    color: white;
+    background-color: #4CAF50;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.product {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+}
+
+.products {
+    display: flex;
+    gap: 20px;
+}
