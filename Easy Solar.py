@@ -30,11 +30,11 @@ class Cart(db.Model):
     product_id = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, default=1)
 
+# Routes
 @app.route('/')
 def index():
     return render_template('index.html')
     
-# Routes
 @app.route('/')
 def home():
     products = Product.query.all()
