@@ -68,3 +68,40 @@ button:hover {
     display: flex;
     gap: 20px;
 }
+
+/* Basic button styling */
+.subscription-button {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #28a745; /* Green background */
+    border: none;
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+/* Hover effect */
+.subscription-button:hover {
+    background-color: #218838; /* Darker green on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Active button effect */
+.subscription-button:active {
+    background-color: #1e7e34; /* Even darker green when pressed */
+    transform: scale(0.98); /* Slightly reduce size */
+}
+
+/* Disabled button style */
+.subscription-button:disabled {
+    background-color: #c3e6cb; /* Light green for disabled state */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
