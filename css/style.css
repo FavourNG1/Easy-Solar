@@ -72,7 +72,7 @@ button:hover {
 /* Basic button styling */
 .subscription-button {
     display: inline-block;
-    padding: 12px 24px;
+    padding: 50px 100px;
     font-size: 16px;
     font-weight: bold;
     color: #fff;
@@ -83,13 +83,13 @@ button:hover {
     transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
     text-align: center;
     text-decoration: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Shadow effect */
 }
 
 /* Hover effect */
 .subscription-button:hover {
     background-color: #218838; /* Darker green on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
 }
 
 /* Active button effect */
