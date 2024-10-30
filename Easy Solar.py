@@ -143,6 +143,10 @@ def success():
 @app.route('/cancel')
 def cancel():
     return render_template('cancel.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')  # This is your about page HTML file
     
 if __name__ == '__main__':
     app.run(debug=True)
