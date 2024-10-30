@@ -4,8 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import stripe
-import requests
-import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
