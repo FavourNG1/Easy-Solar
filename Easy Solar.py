@@ -3,7 +3,9 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 import stripe
+import sqlite3
 import requests
 import datetime
 
@@ -124,6 +126,15 @@ def signup():
         db.session.commit()
         return redirect(url_for('login'))
     return render_template('signup.html')
+
+# Check if user’s subscription is active based on last payment
+@app.route('/check-subscription/<int:user_id>')
+def check_subscription(user_id):
+    user = query_database("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
+    if user and user['balance'] > 0:
+        return jsonify({"status": "active"})
+    else:
+        return jsonify({"status": "inactive"})
         
 @app.route('/success')
 def success():
