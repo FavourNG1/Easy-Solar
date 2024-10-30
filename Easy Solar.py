@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import stripe
+import requests
+import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
@@ -35,6 +37,7 @@ def create_tables():
                     Product(name="Solar Light C", price=60.00)]
         db.session.bulk_save_objects(products)
         db.session.commit()
+        
 # Database helper function
 def query_database(query, args=(), one=False):
     con = sqlite3.connect("data.db")
