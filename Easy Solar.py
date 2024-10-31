@@ -53,6 +53,55 @@ def home():
         return render_template('home.html')
     else:
         return redirect('login.html')
+
+# Route to sign-up page
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        hashed_password = generate_password_hash(password)
+
+        conn = sqlite3.connect('users.db')
+        cursor = conn.cursor()
+        try:
+            cursor.execute('INSERT INTO users (email, password) VALUES (?, ?)', (email, hashed_password))
+            conn.commit()
+            flash('Signup successful! Please log in.', 'success')
+            return redirect('login.html')
+        except sqlite3.IntegrityError:
+            flash('Email already exists. Please use a different email.', 'danger')
+        finally:
+            conn.close()
+    return render_template('signup.html')
+
+# Route to login page
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = sqlite3.connect('users.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user and check_password_hash(user[2], password):
+            session['user_id'] = user[0]
+            flash('Login successful!', 'success')
+            return redirect('home.html')  # Redirect to home page on successful login
+        else:
+            flash('Invalid email or password.', 'danger')
+    return render_template('login.html')
+
+# Route to logout
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('You have been logged out.', 'info')
+    return redirect('login.html')
         
 # Database helper function
 def query_database(query, args=(), one=False):
@@ -118,75 +167,6 @@ def index():
 def home():
     products = Product.query.all()
     return render_template('home.html', products=products)
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
-            session['user_id'] = user.id
-            return redirect('home.html')
-    return render_template('login.html')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-
-        conn = sqlite3.connect('users.db')
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
-        user = cursor.fetchone()
-        conn.close()
-
-        if user and check_password_hash(user[2], password):
-            session['user_id'] = user[0]
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
-        else:
-            flash('Invalid email or password.', 'danger')
-    return render_template('login.html')
-
-# Route to logout
-@app.route('/logout')
-def logout():
-    session.pop('user_id', None)
-    flash('You have been logged out.', 'info')
-    return redirect('login.html'))
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = generate_password_hash(request.form['password'])
-        new_user = User(username=username, password=password)
-        db.session.add(new_user)
-        db.session.commit()
-        return redirect('login.html')
-    return render_template('signup.html')
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        hashed_password = generate_password_hash(password)
-
-        conn = sqlite3.connect('users.db')
-        cursor = conn.cursor()
-        try:
-            cursor.execute('INSERT INTO users (email, password) VALUES (?, ?)', (email, hashed_password))
-            conn.commit()
-            flash('Signup successful! Please log in.', 'success')
-            return redirect(url_for('login'))
-        except sqlite3.IntegrityError:
-            flash('Email already exists. Please use a different email.', 'danger')
-        finally:
-            conn.close()
-    return render_template('signup.html')
 
 # Check if user’s subscription is active based on last payment
 @app.route('/check-subscription/<int:user_id>')
