@@ -10,6 +10,7 @@ import requests
 import datetime
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Replace with a secure secret key for session management.
 app.config['SECRET_KEY'] = 'secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -29,16 +30,29 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
 
-# Initialize and add products
-@app.before_first_request
-def create_tables():
-    db.create_all()
-    if not Product.query.first():
-        products = [Product(name="Solar Light A", price=25.00),
-                    Product(name="Solar Light B", price=40.00),
-                    Product(name="Solar Light C", price=60.00)]
-        db.session.bulk_save_objects(products)
-        db.session.commit()
+# Database setup
+def init_db():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_db()  # Initialize the database when the app starts.
+
+# Route to home page after login
+@app.route('/home')
+def home():
+    if 'user_id' in session:
+        return render_template('home.html')
+    else:
+        return redirect('login.html')
         
 # Database helper function
 def query_database(query, args=(), one=False):
@@ -113,8 +127,35 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
-            return redirect(url_for('home'))
+            return redirect('home.html')
     return render_template('login.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = sqlite3.connect('users.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user and check_password_hash(user[2], password):
+            session['user_id'] = user[0]
+            flash('Login successful!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Invalid email or password.', 'danger')
+    return render_template('login.html')
+
+# Route to logout
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('You have been logged out.', 'info')
+    return redirect('login.html'))
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -124,7 +165,27 @@ def signup():
         new_user = User(username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('login'))
+        return redirect('login.html')
+    return render_template('signup.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        hashed_password = generate_password_hash(password)
+
+        conn = sqlite3.connect('users.db')
+        cursor = conn.cursor()
+        try:
+            cursor.execute('INSERT INTO users (email, password) VALUES (?, ?)', (email, hashed_password))
+            conn.commit()
+            flash('Signup successful! Please log in.', 'success')
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            flash('Email already exists. Please use a different email.', 'danger')
+        finally:
+            conn.close()
     return render_template('signup.html')
 
 # Check if user’s subscription is active based on last payment
