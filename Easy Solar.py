@@ -163,6 +163,13 @@ def verify_payment(payment_id):
 def index():
     return render_template('index.html')
 
+@app.route('/subscription')
+def subscription():
+    if 'user_id' in session:
+        return render_template('subscription.html')
+    else:
+        return redirect('login.html')
+
 # Check if user’s subscription is active based on last payment
 @app.route('/check-subscription/<int:user_id>')
 def check_subscription(user_id):
