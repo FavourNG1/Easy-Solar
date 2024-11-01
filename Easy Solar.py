@@ -91,7 +91,7 @@ def login():
         if user and check_password_hash(user[2], password):
             session['user_id'] = user[0]
             flash('Login successful!', 'success')
-            return redirect('home.html')  # Redirect to home page on successful login
+            return redirect('subscription.html')  # Redirect to home page on successful login
         else:
             flash('Invalid email or password.', 'danger')
     return render_template('login.html')
