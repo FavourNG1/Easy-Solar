@@ -162,11 +162,6 @@ def verify_payment(payment_id):
 @app.route('/')
 def index():
     return render_template('index.html')
-    
-@app.route('/')
-def home():
-    products = Product.query.all()
-    return render_template('home.html', products=products)
 
 # Check if user’s subscription is active based on last payment
 @app.route('/check-subscription/<int:user_id>')
